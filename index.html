@@ -1,0 +1,440 @@
+<!-- Chosen Palette: Warm Stone & Academic Slate (Minimalist, Trustworthy, Analytical) -->
+
+<!-- Application Structure Plan: The SPA is designed as a 'Strategic Decision Dashboard'. 1. Hero Section sets the context. 2. 'Strategic Matrix' (Scatter Plot) provides an immediate visual comparison of Realism vs. Vision, allowing users to see outliers instantly. 3. 'Candidate Analysis Grid' offers detailed, expandable cards for deep diving into specific proposals, pros, and risks. 4. 'The Verdict' section synthesizes the findings into actionable advice (Winner, Patches, Avoid). This structure moves from high-level abstract comparison to concrete details, ending with a firm conclusion, facilitating a logical decision-making flow. -->
+
+<!-- Visualization & Content Choices: 1. Scatter Chart: To visualize 'Realism' vs 'Modernization Potential'. This clearly separates the 'Pragmatic' (Lista 2) from the 'Visionary' (Lista 6) and the 'Low Value' (Lista 1). 2. Doughnut Chart: To show the distribution of strategic focus (Infrastructure, Tech, Security, etc.). 3. Interactive Cards: Used for the 6 candidates to allow clutter-free comparison of 'The Good' vs 'The Bad' using JS toggles. NO SVG or Mermaid used; relying on Chart.js and unicode icons. -->
+
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+<!DOCTYPE html>
+
+<html lang="es"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Análisis Estratégico Rectorado UNALM 2026-2030</title> <script src="https://cdn.tailwindcss.com"></script> <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Merriweather:ital,wght@0,300;0,700;1,300&display=swap" rel="stylesheet"> <style> body { font-family: 'Inter', sans-serif; background-color: #fafaf9; color: #44403c; } h1, h2, h3, h4 { font-family: 'Merriweather', serif; } .chart-container { position: relative; width: 100%; max-width: 800px; margin-left: auto; margin-right: auto; height: 400px; max-height: 500px; } .card-transition { transition: all 0.3s ease-in-out; } .card-transition:hover { transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); } .hidden-content { display: none; } .active-tab { border-bottom: 2px solid #0ea5e9; color: #0ea5e9; font-weight: 600; } .inactive-tab { color: #78716c; } </style> </head> <body class="antialiased">
+
+<!-- Header / Hero Section -->
+<header class="bg-white border-b border-stone-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2">
+            <span class="text-3xl">🗳️</span>
+            <div>
+                <h1 class="text-xl font-bold text-stone-900 leading-tight">Decisión UNALM 2026</h1>
+                <p class="text-xs text-stone-500 uppercase tracking-wider">Análisis Estratégico de Candidatos</p>
+            </div>
+        </div>
+        <nav class="hidden md:flex space-x-6">
+            <a href="#matrix" class="text-sm font-medium hover:text-blue-600 transition">Matriz Estratégica</a>
+            <a href="#candidates" class="text-sm font-medium hover:text-blue-600 transition">Candidatos</a>
+            <a href="#verdict" class="text-sm font-bold text-blue-700 hover:text-blue-800 transition">Veredicto Final</a>
+        </nav>
+    </div>
+</header>
+
+<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+
+    <!-- Introduction -->
+    <section class="max-w-3xl mx-auto text-center space-y-4">
+        <h2 class="text-3xl md:text-4xl font-bold text-stone-800">¿Quién debe liderar la UNALM?</h2>
+        <p class="text-lg text-stone-600 leading-relaxed">
+            Este informe interactivo desglosa las 6 propuestas al rectorado, clasificándolas por su enfoque real, viabilidad técnica y riesgos. Hemos analizado más allá de las promesas para identificar quién ofrece soluciones parche y quién tiene un plan de transformación real.
+        </p>
+        <div class="flex flex-wrap justify-center gap-2 mt-4">
+            <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold border border-green-200">Pragmáticos</span>
+            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold border border-blue-200">Modernizadores</span>
+            <span class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold border border-amber-200">Corporativos</span>
+            <span class="px-3 py-1 bg-stone-200 text-stone-700 rounded-full text-xs font-semibold border border-stone-300">Institucionales</span>
+        </div>
+    </section>
+
+    <!-- Visualization Section: Strategic Matrix -->
+    <section id="matrix" class="bg-white rounded-2xl shadow-sm border border-stone-200 p-6 md:p-8">
+        <div class="mb-6 border-b border-stone-100 pb-4">
+            <h3 class="text-2xl font-bold text-stone-800 mb-2">Matriz de Decisión Estratégica</h3>
+            <p class="text-stone-600">
+                Visualización de los candidatos basada en dos ejes críticos: <strong>Realismo/Viabilidad</strong> (capacidad de ejecución inmediata) y <strong>Visión de Futuro</strong> (modernización y tecnología).
+                Esta matriz ayuda a separar las propuestas "parche" de las transformacionales.
+            </p>
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Scatter Chart -->
+            <div class="lg:col-span-2 flex flex-col items-center">
+                <div class="chart-container">
+                    <canvas id="strategicMatrixChart"></canvas>
+                </div>
+                <p class="text-xs text-stone-400 mt-2 text-center italic">Eje X: Viabilidad Técnica/Financiera | Eje Y: Modernización Tecnológica</p>
+            </div>
+
+            <!-- Chart Context/Summary -->
+            <div class="lg:col-span-1 space-y-6 flex flex-col justify-center bg-stone-50 p-6 rounded-xl">
+                <div>
+                    <h4 class="font-bold text-stone-800 mb-2 flex items-center gap-2"><span class="text-blue-600 text-xl">●</span> El Líder (Cuadrante Superior)</h4>
+                    <p class="text-sm text-stone-600">La <strong>Lista 6</strong> se destaca por combinar una alta visión tecnológica (Smart Campus) con una metodología estructurada (ISO), ofreciendo el único camino real a la modernización.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-stone-800 mb-2 flex items-center gap-2"><span class="text-green-600 text-xl">●</span> Los Pragmáticos (Cuadrante Inferior-Derecha)</h4>
+                    <p class="text-sm text-stone-600">La <strong>Lista 2</strong> es altamente realista para resolver crisis básicas (agua/luz), pero carece de ambición tecnológica futura.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold text-stone-800 mb-2 flex items-center gap-2"><span class="text-red-500 text-xl">●</span> Riesgo Alto (Cuadrante Inferior-Izquierda)</h4>
+                    <p class="text-sm text-stone-600">La <strong>Lista 1</strong> y otras opciones presentan planes genéricos o financieramente riesgosos (populismo) que comprometen la estabilidad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Candidates Grid -->
+    <section id="candidates" class="space-y-6">
+        <div class="flex flex-col md:flex-row justify-between items-end border-b border-stone-200 pb-4 gap-4">
+            <div class="max-w-2xl">
+                <h3 class="text-2xl font-bold text-stone-800 mb-2">Análisis Detallado por Lista</h3>
+                <p class="text-stone-600">Explora las propuestas clave, fortalezas y riesgos ocultos de cada candidato. Haz clic en las tarjetas para ver el análisis crítico.</p>
+            </div>
+            <!-- Filter Controls -->
+            <div class="flex bg-stone-100 p-1 rounded-lg">
+                <button onclick="filterCandidates('all')" class="px-4 py-2 text-sm font-medium rounded-md bg-white shadow-sm text-stone-800 hover:bg-stone-50 transition" id="btn-all">Todos</button>
+                <button onclick="filterCandidates('recommended')" class="px-4 py-2 text-sm font-medium rounded-md text-stone-600 hover:bg-white hover:shadow-sm transition" id="btn-rec">Recomendado</button>
+                <button onclick="filterCandidates('risk')" class="px-4 py-2 text-sm font-medium rounded-md text-stone-600 hover:bg-white hover:shadow-sm transition" id="btn-risk">Riesgosos</button>
+            </div>
+        </div>
+
+        <div id="candidate-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Cards will be injected via JS -->
+        </div>
+    </section>
+
+    <!-- Verdict Section -->
+    <section id="verdict" class="bg-stone-900 text-white rounded-2xl overflow-hidden shadow-2xl mt-12">
+        <div class="p-8 md:p-12 text-center border-b border-stone-700">
+            <h2 class="text-3xl md:text-5xl font-bold mb-4 text-white">Veredicto Final</h2>
+            <p class="text-stone-400 text-lg max-w-2xl mx-auto">Basado en la viabilidad técnica, sostenibilidad financiera y visión a largo plazo.</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-stone-700">
+            
+            <!-- Winner -->
+            <div class="p-8 hover:bg-stone-800 transition duration-300">
+                <div class="flex justify-center mb-4 text-5xl">🏆</div>
+                <h3 class="text-xl font-bold text-blue-400 mb-2 text-center">La Opción Correcta</h3>
+                <p class="text-2xl font-bold text-white text-center mb-4">Lista 6: Visión de Futuro</p>
+                <p class="text-stone-300 text-sm leading-relaxed text-center">
+                    Es la única lista que propone <strong>transformar</strong> la universidad. Plantea un <strong>Smart Campus, 5G e ISO 21001</strong>. Su enfoque sistémico y técnico es superior, ofreciendo una ruta viable para que la UNALM compita en el siglo XXI.
+                </p>
+            </div>
+
+            <!-- Patches -->
+            <div class="p-8 hover:bg-stone-800 transition duration-300">
+                <div class="flex justify-center mb-4 text-5xl">🛠️</div>
+                <h3 class="text-xl font-bold text-amber-400 mb-2 text-center">Las Opciones "Parche"</h3>
+                <p class="text-lg font-bold text-white text-center mb-4">Listas 2, 3, 4 y 5</p>
+                <p class="text-stone-300 text-sm leading-relaxed text-center">
+                    Intenciones válidas pero sin visión integral. La <strong>Lista 2</strong> arregla el agua pero olvida la modernidad. La <strong>Lista 4</strong> es populista. La <strong>Lista 3</strong> apaga incendios. Mantienen el status quo con ligeras mejoras.
+                </p>
+            </div>
+
+            <!-- Avoid -->
+            <div class="p-8 bg-red-900/20 hover:bg-red-900/30 transition duration-300 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-2 bg-red-600 text-white text-xs font-bold uppercase tracking-wider">Evitar</div>
+                <div class="flex justify-center mb-4 text-5xl">❌</div>
+                <h3 class="text-xl font-bold text-red-400 mb-2 text-center">Destruir / Evitar</h3>
+                <p class="text-2xl font-bold text-white text-center mb-4">Lista 1: Gestión Molinera</p>
+                <p class="text-red-100 text-sm leading-relaxed text-center">
+                    La propuesta más vacía. Basada en retórica abstracta ("unión", "lealtad") sin sustento técnico. <strong>No tienen un plan real</strong> para infraestructura o investigación. Votar aquí es desperdiciar el voto en discurso emocional.
+                </p>
+            </div>
+
+        </div>
+    </section>
+
+</main>
+
+<footer class="bg-white border-t border-stone-200 mt-12 py-8">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+        <p class="text-stone-500 text-sm">Análisis basado en los Planes de Gobierno presentados por las listas candidatas UNALM 2026-2030.</p>
+    </div>
+</footer>
+
+<!-- JavaScript Logic -->
+<script>
+    // --- Data Source ---
+    const candidates = [
+        {
+            id: 6,
+            name: "Lista 6: Visión de Futuro",
+            candidate: "Milber Ureña",
+            type: "Modernizador",
+            icon: "🚀",
+            colorClass: "bg-blue-100 text-blue-800 border-blue-200",
+            focus: "Tecnología, Procesos, Smart Campus",
+            viability: 85, // Score for chart
+            vision: 95,    // Score for chart
+            tag: "recommended",
+            summary: "La única opción transformacional. Propone digitalización real, Smart Campus y gestión por procesos (ISO).",
+            pros: ["Smart Campus & Red 5G Rural.", "Gestión por procesos (ISO 21001).", "Agricultura de precisión y Robótica."],
+            cons: ["Riesgo de burocracia por exceso de certificaciones.", "Requiere personal TI altamente calificado."]
+        },
+        {
+            id: 2,
+            name: "Lista 2: Compromiso Molinero",
+            candidate: "Sady García",
+            type: "Pragmático",
+            icon: "🚜",
+            colorClass: "bg-green-100 text-green-800 border-green-200",
+            focus: "Infraestructura Básica (Agua/Luz)",
+            viability: 90,
+            vision: 40,
+            tag: "patch",
+            summary: "La opción de ingeniería pura. Se enfoca en resolver la crisis hídrica (SEDAPAL) y energética.",
+            pros: ["Conexión a SEDAPAL (Agua potable).", "Nueva subestación eléctrica.", "OpenLabs (Optimización recursos)."],
+            cons: ["Visión muy 'ladrillo y cemento'.", "Poca ambición tecnológica futura.", "Dependencia de tiempos estatales."]
+        },
+        {
+            id: 3,
+            name: "Lista 3: Molineros en Acción",
+            candidate: "Néstor Montalvo",
+            type: "Bienestar",
+            icon: "🚑",
+            colorClass: "bg-teal-100 text-teal-800 border-teal-200",
+            focus: "Bienestar Inmediato (Comedor/Salud)",
+            viability: 75,
+            vision: 35,
+            tag: "patch",
+            summary: "Empatía inmediata. Atacan los dolores diarios: comedor, transporte y centro médico.",
+            pros: ["Mejora inmediata del comedor.", "Transporte universitario eficiente.", "Enfoque humano y de salud."],
+            cons: ["Cortoplacismo (Apagar incendios).", "Falta estrategia académica global.", "Soluciones temporales."]
+        },
+        {
+            id: 4,
+            name: "Lista 4: Experiencia y Liderazgo",
+            candidate: "Ex-Gestión",
+            type: "Corporativo",
+            icon: "🛡️",
+            colorClass: "bg-amber-100 text-amber-800 border-amber-200",
+            focus: "Seguridad y Beneficios Económicos",
+            viability: 50,
+            vision: 50,
+            tag: "risk",
+            summary: "Apelan al pasado. Prometen seguridad total y gratuidad financiera riesgosa.",
+            pros: ["Defensa legal de terrenos.", "Experiencia previa de gestión.", "Beneficios directos al docente."],
+            cons: ["Populismo financiero (Maestrías gratis).", "Riesgo de desfinanciar mantenimiento.", "Mirada al pasado (2014)."]
+        },
+        {
+            id: 5,
+            name: "Lista 5: Renacer Molinero",
+            candidate: "Alberto Barrón",
+            type: "Institucional",
+            icon: "🌿",
+            colorClass: "bg-stone-200 text-stone-700 border-stone-300",
+            focus: "Ética, Transparencia, Acreditación",
+            viability: 60,
+            vision: 45,
+            tag: "patch",
+            summary: "Propuestas éticas necesarias pero redundantes. Metas de acreditación muy agresivas.",
+            pros: ["Auditoría de gestión semestral.", "Enfoque ambiental (Campus Verde).", "Acreditación de carreras."],
+            cons: ["Propuestas genéricas.", "Meta de 100% acreditación poco realista.", "Falta diferencial técnico."]
+        },
+        {
+            id: 1,
+            name: "Lista 1: Gestión Molinera",
+            candidate: "Elías Huerta",
+            type: "Institucional",
+            icon: "🤝",
+            colorClass: "bg-red-100 text-red-800 border-red-200",
+            focus: "Unión, Lealtad, Discurso",
+            viability: 20,
+            vision: 20,
+            tag: "risk",
+            summary: "La propuesta más vacía. Basada en retórica abstracta sin sustento técnico real.",
+            pros: ["Promoción de identidad molinera.", "Intención de visibilización."],
+            cons: ["Falta total de plan técnico.", "Discurso emocional vacío.", "Incapacidad para resolver crisis infraestructural."]
+        }
+    ];
+
+    // --- Logic: Render Cards ---
+    function renderCards(filter = 'all') {
+        const container = document.getElementById('candidate-grid');
+        container.innerHTML = '';
+        
+        const filtered = filter === 'all' 
+            ? candidates 
+            : candidates.filter(c => {
+                if (filter === 'recommended') return c.id === 6;
+                if (filter === 'risk') return c.tag === 'risk';
+                return true;
+            });
+
+        filtered.forEach(c => {
+            const card = document.createElement('div');
+            card.className = `bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden card-transition flex flex-col`;
+            card.innerHTML = `
+                <div class="p-5 flex-1 cursor-pointer" onclick="toggleCard(${c.id})">
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-3xl">${c.icon}</span>
+                        <span class="px-2 py-1 rounded text-xs font-bold uppercase tracking-wide border ${c.colorClass}">${c.type}</span>
+                    </div>
+                    <h4 class="text-lg font-bold text-stone-800 leading-tight mb-1">${c.name}</h4>
+                    <p class="text-sm text-stone-500 mb-3 font-medium">${c.candidate}</p>
+                    <p class="text-stone-600 text-sm leading-relaxed mb-4">${c.summary}</p>
+                    
+                    <div class="flex items-center gap-2 text-xs font-semibold text-stone-400 mt-auto">
+                        <span>Enfoque: ${c.focus}</span>
+                    </div>
+                </div>
+                
+                <!-- Expandable Section -->
+                <div id="details-${c.id}" class="hidden-content bg-stone-50 border-t border-stone-100 p-5 text-sm">
+                    <div class="mb-3">
+                        <h5 class="font-bold text-green-700 mb-1 flex items-center gap-1">✅ Lo Bueno</h5>
+                        <ul class="list-disc list-inside text-stone-600 space-y-1 pl-1">
+                            ${c.pros.map(p => `<li>${p}</li>`).join('')}
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-bold text-red-600 mb-1 flex items-center gap-1">⚠️ Riesgos / Lo Malo</h5>
+                        <ul class="list-disc list-inside text-stone-600 space-y-1 pl-1">
+                            ${c.cons.map(r => `<li>${r}</li>`).join('')}
+                        </ul>
+                    </div>
+                </div>
+                
+                <button onclick="toggleCard(${c.id})" class="w-full py-2 bg-stone-50 hover:bg-stone-100 text-stone-500 text-xs font-bold uppercase tracking-wider border-t border-stone-100 transition-colors">
+                    Ver Detalles <span id="arrow-${c.id}">▼</span>
+                </button>
+            `;
+            container.appendChild(card);
+        });
+        
+        // Update Buttons State
+        ['all', 'rec', 'risk'].forEach(id => {
+            const btn = document.getElementById(`btn-${id}`);
+            if (`btn-${filter}` === `btn-${id}`) {
+                btn.classList.add('bg-white', 'shadow-sm', 'text-stone-800');
+                btn.classList.remove('text-stone-600');
+            } else {
+                btn.classList.remove('bg-white', 'shadow-sm', 'text-stone-800');
+                btn.classList.add('text-stone-600');
+            }
+        });
+    }
+
+    function toggleCard(id) {
+        const details = document.getElementById(`details-${id}`);
+        const arrow = document.getElementById(`arrow-${id}`);
+        if (details.style.display === 'block') {
+            details.style.display = 'none';
+            arrow.textContent = '▼';
+        } else {
+            details.style.display = 'block';
+            arrow.textContent = '▲';
+        }
+    }
+
+    function filterCandidates(type) {
+        renderCards(type);
+    }
+
+    // --- Logic: Charts ---
+    function initCharts() {
+        const ctx = document.getElementById('strategicMatrixChart').getContext('2d');
+        
+        const scatterData = candidates.map(c => ({
+            x: c.viability,
+            y: c.vision,
+            name: c.name,
+            icon: c.icon,
+            id: c.id
+        }));
+
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'Candidatos',
+                    data: scatterData,
+                    backgroundColor: (context) => {
+                        const id = context.raw?.id;
+                        if (id === 6) return '#2563eb'; // Blue for Winner
+                        if (id === 1) return '#dc2626'; // Red for Avoid
+                        if (id === 2) return '#16a34a'; // Green for Pragmatic
+                        return '#d6d3d1'; // Grey for others
+                    },
+                    pointRadius: 12,
+                    pointHoverRadius: 15,
+                    borderColor: '#fff',
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                        titleColor: '#1c1917',
+                        bodyColor: '#44403c',
+                        borderColor: '#e7e5e4',
+                        borderWidth: 1,
+                        padding: 10,
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.name;
+                            },
+                            afterLabel: function(context) {
+                                return `Viabilidad: ${context.raw.x}% | Visión: ${context.raw.y}%`;
+                            }
+                        }
+                    },
+                    annotation: {
+                        // Can be added if chartjs-plugin-annotation is loaded, keeping simple for now
+                    }
+                },
+                scales: {
+                    x: {
+                        title: { display: true, text: 'Realismo / Viabilidad Técnica (Pragmatismo)', font: { weight: 'bold' } },
+                        min: 0, max: 100,
+                        grid: { color: '#f5f5f4' }
+                    },
+                    y: {
+                        title: { display: true, text: 'Visión de Futuro / Modernización', font: { weight: 'bold' } },
+                        min: 0, max: 100,
+                        grid: { color: '#f5f5f4' }
+                    }
+                },
+                layout: {
+                    padding: 20
+                }
+            },
+            plugins: [{
+                id: 'customLabels',
+                afterDatasetsDraw(chart) {
+                    const { ctx } = chart;
+                    chart.data.datasets[0].data.forEach((datapoint, index) => {
+                        const { x, y } = chart.scales;
+                        ctx.save();
+                        ctx.font = '24px Arial';
+                        ctx.fillStyle = 'black';
+                        ctx.textAlign = 'center';
+                        ctx.fillText(datapoint.icon, x.getPixelForValue(datapoint.x), y.getPixelForValue(datapoint.y) + 6); // Centered icon
+                        
+                        // Add Label Text below
+                        ctx.font = 'bold 10px Inter';
+                        ctx.fillStyle = '#57534e';
+                        let yOffset = 25;
+                        if(datapoint.id === 6) ctx.fillStyle = '#2563eb';
+                        if(datapoint.id === 1) ctx.fillStyle = '#dc2626';
+                        
+                        ctx.fillText(datapoint.name.split(':')[0], x.getPixelForValue(datapoint.x), y.getPixelForValue(datapoint.y) + yOffset);
+                        ctx.restore();
+                    });
+                }
+            }]
+        });
+    }
+
+    // --- Init ---
+    document.addEventListener('DOMContentLoaded', () => {
+        renderCards();
+        initCharts();
+    });
+
+</script>
+</body> </html>
